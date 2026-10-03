@@ -172,14 +172,49 @@
     if (clr) clr.onclick = function () { save({ day: key, type: 'clear' }); };
   }
 
-  /* ---------------------------------------------------------------- phiếu lương (theo mẫu cũ) */
-  function renderSlip(p) {
+  /* ---------------------------------------------------------------- phiếu lương "Lucas Gold"
+     PHẢI giữ giống payslip_html() trong payroll.py (ảnh phiếu gửi Telegram) — cùng dùng assets/payslip.css */
+  function renderSlip(d) {
+    if (!d.emp) return renderSlipOld(d);
+    var f = function (n) { return Math.round(Math.abs(n)).toLocaleString('vi-VN') + 'đ'; };
+    var num = function (n) { return Math.round(n).toLocaleString('vi-VN'); };
+    var inc = d.lines.filter(function (l) { return l[1] >= 0; }), ded = d.lines.filter(function (l) { return l[1] < 0; });
+    var cls = function (l) { return /Hoa hồng/.test(l[0]) ? (/Shopee/.test(l[0]) ? ' shopee' : /TikTok/.test(l[0]) ? ' tiktok' : '') : ''; };
+    var row = function (l, sign) {
+      return '<div class="ps-row' + cls(l) + (l[1] ? '' : ' zero') + '"><span>' + esc(l[0]) + (l[2] ? '<small>' + esc(l[2]) + '</small>' : '') +
+        '</span><b>' + sign + f(l[1]) + '</b></div>'; };
+    var sum = function (a) { return a.reduce(function (t, l) { return t + l[1]; }, 0); };
+    var dedRows = ded.map(function (l) { return row(l, '-'); }).join('') || '<div class="ps-row zero"><span>Không có khoản trừ</span><b>0đ</b></div>';
+    if (d.paid) dedRows += '<div class="ps-row adv"><span>Đã chuyển tạm ứng</span><b>-' + f(d.paid) + '</b></div>';
+    var hr = d.paid ? '<div class="ps-hr"><small>Đã tạm ứng:<br>-' + f(d.paid) + '</small><b>CÒN THANH TOÁN</b><div class="ps-remain">' +
+      num(d.remain) + ' <u>đ</u></div></div>' : '';
+    var bank = d.bank ? '<div class="ps-bank"><div><h3>💳 THÔNG TIN THANH TOÁN NGÂN HÀNG</h3><div>STK: <span class="acc">' + esc(d.bank.acc) +
+      '</span></div><div><b>Ngân hàng:</b> ' + esc(d.bank.bank) + ' • <b>Chủ TK:</b> ' + esc(d.bank.holder) + '</div></div>' +
+      (d.bank.qr ? '<img src="' + esc(d.bank.qr) + '" alt="QR">' : '') + '</div>' : '';
+    return '<div class="lcc-ps" style="margin-bottom:14px">' +
+      '<div class="ps-head"><div><span class="ps-badge">' + esc(d.company).toUpperCase() + '</span><span class="ps-sub">' + esc(d.company_sub) + '</span>' +
+      '<h1>PHIẾU LƯƠNG &amp; THU NHẬP</h1><div class="ps-period">Kỳ lương: <b>Tháng ' + esc(d.month_label) + '</b> • Ngày lập: ' + esc(d.issued) + '</div></div>' +
+      '<div class="ps-code"><small>MÃ NHÂN SỰ</small><b>' + esc(d.emp.code) + '</b></div></div>' +
+      '<div class="ps-info"><div><small>Họ và tên nhân sự</small><b>' + esc(d.emp.name) + '</b></div>' +
+      '<div><small>Vị trí / Bộ phận</small><b>' + esc(d.emp.position) + '</b></div>' +
+      '<div><small>Ngày công thực tế</small><b class="blue">' + esc(d.workdays) + '</b></div></div>' +
+      '<div class="ps-body"><div class="ps-hero"><div class="ps-hl"><small>💰 THỰC NHẬN THÁNG ' + esc(d.month_label) + '</small>' +
+      '<div class="ps-net">' + num(d.net) + ' <u>đ</u></div><div class="ps-words">Bằng chữ: <b>' + esc(d.words) + '</b></div></div>' + hr + '</div>' +
+      '<div class="ps-cols"><div class="ps-col in"><div class="ps-ch"><span>↗ CÁC KHOẢN THU NHẬP (+)</span><b>' + f(sum(inc)) + '</b></div>' +
+      inc.map(function (l, i) { return row(l, i ? '+' : ''); }).join('') + '</div>' +
+      '<div class="ps-col out"><div class="ps-ch"><span>↘ CÁC KHOẢN GIẢM TRỪ (-)</span><b>-' + f(sum(ded)) + '</b></div>' + dedRows + '</div></div>' +
+      bank + '</div>' +
+      '<div class="ps-foot"><div>' + esc(d.company_footer || (d.company + ' • ' + d.company_sub)) +
+      '<i>Mọi thắc mắc về bảng lương vui lòng phản hồi trong vòng 24h kể từ khi nhận phiếu.</i></div>' +
+      '<div class="ps-stamp"><div>' + esc(d.company).toUpperCase() + ' ★ ĐÃ DUYỆT</div><small>Kế toán / Quản lý</small></div></div></div>';
+  }
+  function renderSlipOld(p) {   // phiếu đẩy lên trước bản 1.3 (chưa có thông tin nhân sự)
     var rows = (p.lines || []).map(function (l) {
       return '<tr><td>' + esc(l[0]) + (l[2] ? '<small>' + esc(l[2]) + '</small>' : '') + '</td><td class="' + (l[1] < 0 ? 'neg' : '') + '">' + money(l[1]) + '</td></tr>'; }).join('');
     return '<div class="lcc-slip"><div class="lcc-sh"><b>PHIẾU LƯƠNG ' + esc(p.title || '') + '</b><span>' + esc(p.company || 'Lucas Combo') + '</span></div>' +
       '<table>' + rows + '<tr class="tot"><td>THỰC NHẬN</td><td>' + money(p.net) + '</td></tr>' +
       (p.paid ? '<tr><td>Đã ứng</td><td class="neg">' + money(-p.paid) + '</td></tr><tr class="tot"><td>CÒN NHẬN</td><td>' + money(p.remain) + '</td></tr>' : '') +
-      '</table>' + (p.note ? '<p class="lcc-mut">' + esc(p.note) + '</p>' : '') + '</div>';
+      '</table></div>';
   }
 
   S.month = ym(new Date());
