@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Lucas Chấm Công
  * Description: Nhân viên tự điền ca làm tại trang /cham-cong (đăng nhập bằng mã PIN). Tool tính lương đầu tháng đọc ca qua REST, đẩy phiếu lương lên để chủ shop duyệt; duyệt xong nhân viên mới xem được phiếu của mình.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Update URI: https://github.com/thanhluc102-png/lucas-cham-cong
  * Author: Lucas Combo
  * Requires PHP: 7.4
  */
 if (!defined('ABSPATH')) exit;
 
-define('LCC_VER', '1.2.0');
+define('LCC_VER', '1.2.1');
 define('LCC_REPO', 'thanhluc102-png/lucas-cham-cong');   // nơi plugin tự lấy bản cập nhật
 // Quy tắc tự xác định ca từ giờ chấm công (đã chốt với chủ shop): trễ <= 15' vẫn đủ ca
 define('LCC_GRACE_MIN', 15);
@@ -120,6 +120,19 @@ add_filter('pre_set_site_transient_update_plugins', function ($t) {
     }
     return $t;
 });
+// Tự tải gói cập nhật (theo redirect GitHub -> CDN). Hàm tải mặc định của WordPress từ chối URL khi máy chủ
+// không phân giải được tên miền lúc kiểm tra an toàn -> báo "A valid URL was not provided".
+add_filter('upgrader_pre_download', function ($reply, $package) {
+    if ($reply !== false || strpos((string) $package, 'github.com/' . LCC_REPO . '/releases/download/') === false) return $reply;
+    $tmp = wp_tempnam($package);
+    $r = wp_remote_get($package, ['timeout' => 120, 'stream' => true, 'filename' => $tmp, 'redirection' => 5]);
+    if (is_wp_error($r) || wp_remote_retrieve_response_code($r) != 200) {
+        @unlink($tmp);
+        return new WP_Error('lcc_download', 'Không tải được bản cập nhật từ GitHub: ' .
+            (is_wp_error($r) ? $r->get_error_message() : 'HTTP ' . wp_remote_retrieve_response_code($r)));
+    }
+    return $tmp;
+}, 10, 2);
 add_filter('plugins_api', function ($res, $action, $args) {
     if ($action !== 'plugin_information' || ($args->slug ?? '') !== 'lucas-cham-cong') return $res;
     $rel = lcc_latest_release();
