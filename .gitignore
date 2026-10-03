@@ -1,0 +1,4 @@
+lcc-config.php
+*.zip
+.DS_Store
+_test*

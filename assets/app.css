@@ -1,0 +1,78 @@
+/* Lucas Chấm Công — gói trong #lcc-app để theme Flatsome không đè (Flatsome hay ép style cho button/input). */
+#lcc-app, .lcc-sheet { --ink:#0f172a; --mut:#64748b; --line:#e2e8f0; --bg:#f8fafc; --acc:#0f766e; --accbg:#ccfbf1;
+  --std:#0369a1; --stdbg:#e0f2fe; --pm:#a16207; --pmbg:#fef3c7; --full:#be123c; --fullbg:#ffe4e6;
+  --half:#6d28d9; --halfbg:#ede9fe; --leave:#15803d; --leavebg:#dcfce7; --off:#475569; --offbg:#f1f5f9;
+  color:var(--ink); font:15px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+#lcc-app { max-width:720px; margin:0 auto; padding:8px 0 40px; }
+#lcc-app *, .lcc-sheet * { box-sizing:border-box; }
+#lcc-app button, .lcc-sheet button { text-transform:none; letter-spacing:0; margin:0; min-height:0; line-height:1.3;
+  font:inherit; cursor:pointer; box-shadow:none; }
+#lcc-app input, #lcc-app select, .lcc-sheet input { width:100%; height:auto; margin:0 0 4px; padding:10px 12px;
+  border:1px solid var(--line); border-radius:10px; font:inherit; background:#fff; color:var(--ink); box-shadow:none; }
+#lcc-app label, .lcc-sheet label { display:block; font-size:13px; color:var(--mut); margin:12px 0 6px; font-weight:500; }
+#lcc-app .lcc-mut, .lcc-sheet .lcc-mut { color:var(--mut); font-weight:400; }
+#lcc-app .lcc-loading { text-align:center; padding:40px; color:var(--mut); }
+#lcc-app .lcc-card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:22px; }
+#lcc-app .lcc-login { max-width:380px; margin:20px auto; }
+#lcc-app .lcc-login h2 { margin:0 0 4px; font-size:21px; }
+#lcc-app .lcc-btn, .lcc-sheet .lcc-btn { display:block; width:100%; margin-top:16px; padding:12px; border:0; border-radius:12px;
+  background:var(--acc); color:#fff; font-weight:700; font-size:16px; }
+.lcc-sheet .lcc-btn.ghost { background:#fff; color:var(--full); border:1px solid var(--line); }
+#lcc-app .lcc-err, .lcc-sheet .lcc-err { color:var(--full); font-size:13px; margin-top:10px; min-height:1em; }
+#lcc-app .lcc-link, .lcc-sheet .lcc-link { background:none; border:0; padding:0; color:var(--acc); text-decoration:underline; font-size:13px; }
+#lcc-app .lcc-top { display:flex; justify-content:space-between; align-items:center; padding:4px 2px 10px; }
+#lcc-app .lcc-month { display:flex; justify-content:center; align-items:center; gap:18px; margin:4px 0 12px; font-size:18px; }
+#lcc-app .lcc-nav { width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:#fff; font-size:22px; color:var(--ink); padding:0; }
+#lcc-app .lcc-stats { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:10px; }
+#lcc-app .lcc-stats div { background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:8px 4px; text-align:center; font-size:11px; color:var(--mut); }
+#lcc-app .lcc-stats b { display:block; font-size:19px; color:var(--ink); }
+#lcc-app .lcc-note { background:var(--bg); border-radius:12px; padding:10px 12px; font-size:13px; color:var(--mut); margin-bottom:10px; }
+#lcc-app .lcc-note.ok { background:var(--leavebg); color:var(--leave); }
+#lcc-app .lcc-days { display:flex; flex-direction:column; gap:6px; }
+#lcc-app .lcc-day { display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%; text-align:left; background:#fff;
+  border:1px solid var(--line); border-radius:12px; padding:9px 12px; color:var(--ink); }
+#lcc-app .lcc-day.sun { background:#fff7ed; border-color:#fed7aa; }
+#lcc-app .lcc-day.today { outline:2px solid var(--acc); }
+#lcc-app .lcc-day:disabled { cursor:default; opacity:.85; }
+#lcc-app .lcc-dd { width:46px; font-size:12px; color:var(--mut); display:flex; flex-direction:column; line-height:1.1; }
+#lcc-app .lcc-dd b { font-size:18px; color:var(--ink); }
+#lcc-app .lcc-tag, .lcc-sheet .lcc-opt { display:inline-block; border-radius:20px; padding:3px 10px; font-size:13px; font-weight:600; }
+#lcc-app .lcc-tag.empty { color:#cbd5e1; font-weight:400; font-style:italic; }
+#lcc-app .lcc-tag.extra { background:var(--fullbg); color:var(--full); }
+#lcc-app .lcc-dnote { width:100%; padding-left:54px; font-size:12px; color:var(--mut); }
+#lcc-app .std, .lcc-sheet .std { background:var(--stdbg); color:var(--std); }
+#lcc-app .pm, .lcc-sheet .pm { background:var(--pmbg); color:var(--pm); }
+#lcc-app .full, .lcc-sheet .full { background:var(--fullbg); color:var(--full); }
+#lcc-app .half, .lcc-sheet .half { background:var(--halfbg); color:var(--half); }
+#lcc-app .leave, .lcc-sheet .leave { background:var(--leavebg); color:var(--leave); }
+#lcc-app .off, .lcc-sheet .off { background:var(--offbg); color:var(--off); }
+.lcc-sheet { position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:99999; display:flex; align-items:flex-end; justify-content:center; }
+.lcc-sheet .lcc-panel { background:#fff; width:100%; max-width:520px; border-radius:20px 20px 0 0; padding:16px 18px 26px; max-height:92vh; overflow:auto; }
+.lcc-sheet .lcc-ph { display:flex; justify-content:space-between; align-items:center; font-size:17px; margin-bottom:10px; }
+.lcc-sheet .lcc-opt { display:block; width:100%; text-align:left; border:2px solid transparent; border-radius:12px; padding:11px 14px; margin-bottom:6px; font-size:15px; }
+.lcc-sheet .lcc-opt.on { border-color:currentColor; }
+.lcc-sheet .lcc-step { display:flex; align-items:center; gap:14px; }
+.lcc-sheet .lcc-step button { width:44px; height:44px; border-radius:12px; border:1px solid var(--line); background:#fff; font-size:22px; padding:0; color:var(--ink); }
+.lcc-sheet .lcc-step b { min-width:40px; text-align:center; font-size:20px; }
+.lcc-sheet .lcc-row { display:flex; gap:8px; }
+/* Phiếu lương — theo mẫu cũ: giấy trắng, viền đen, bảng 2 cột */
+#lcc-app .lcc-slip { margin:0 0 14px; background:#fff; border:2px solid var(--ink); border-radius:6px; overflow:hidden; color:#000; }
+#lcc-app .lcc-sh { padding:14px 16px; border-bottom:2px solid var(--ink); display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
+#lcc-app .lcc-sh b { font-size:17px; }
+#lcc-app .lcc-sh span { font-size:12px; color:#475569; }
+#lcc-app .lcc-slip table { width:100%; border-collapse:collapse; margin:0; border:0; }
+#lcc-app .lcc-slip td { padding:8px 16px; border:0; border-bottom:1px solid #cbd5e1; font-size:14px; vertical-align:top; }
+#lcc-app .lcc-slip td:last-child { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+#lcc-app .lcc-slip td small { display:block; color:#64748b; font-size:12px; }
+#lcc-app .lcc-slip td.neg { color:#b91c1c; }
+#lcc-app .lcc-slip tr.tot td { font-weight:800; font-size:16px; border-top:2px solid var(--ink); background:#f8fafc; }
+#lcc-app .lcc-slip p { padding:0 16px 12px; font-size:12px; }
+@media (max-width:480px) { #lcc-app .lcc-stats { grid-template-columns:repeat(3,1fr); } }
+#lcc-app .lcc-today { background:#fff; border:2px solid var(--acc); border-radius:16px; padding:14px 16px; margin-bottom:12px; }
+#lcc-app .lcc-tt { display:flex; justify-content:space-between; align-items:center; font-size:16px; margin-bottom:4px; }
+#lcc-app .lcc-wifi { font-size:12px; font-weight:600; border-radius:20px; padding:3px 10px; }
+#lcc-app .lcc-wifi.ok { background:var(--leavebg); color:var(--leave); }
+#lcc-app .lcc-wifi.no { background:var(--fullbg); color:var(--full); }
+#lcc-app .lcc-btn.out { background:var(--full); }
+#lcc-app .lcc-btn:disabled { opacity:.5; }
+#lcc-app .lcc-tag.ok { background:var(--leavebg); color:var(--leave); }
