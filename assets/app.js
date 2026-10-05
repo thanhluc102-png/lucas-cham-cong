@@ -101,7 +101,8 @@
     h += '<div class="lcc-month"><button class="lcc-nav" data-d="-1">‹</button><b>' + label + '</b><button class="lcc-nav" data-d="1">›</button></div>';
     h += '<div class="lcc-stats"><div><b>' + st.cong + '</b>công</div><div><b>' + st.full + '</b>ngày 9–20h</div>' +
       '<div><b>' + st.sun + '</b>Chủ nhật</div><div><b>' + st.extra + 'h</b>làm thêm</div><div><b>' + st.leave + '</b>nghỉ phép</div></div>';
-    if (d.payslip) h += renderSlip(d.payslip);
+    if (d.payslip) h += renderSlip(d.payslip) + '<div class="lcc-sbar"><button class="lcc-btn" id="lcc-dl">📷 Tải ảnh phiếu</button>' +
+      '<button class="lcc-btn ghost2" id="lcc-pr">🖨 In / Lưu PDF</button></div>';
     if (S.month === ym(today) && !locked) {
       var tp = (d.punches || []).filter(function (p) { return p.day === todayKey; });
       h += '<div class="lcc-today"><div class="lcc-tt"><b>Hôm nay ' + today.getDate() + '/' + (today.getMonth() + 1) + '</b>' +
@@ -128,6 +129,28 @@
     document.getElementById('lcc-out').onclick = logout;
     root.querySelectorAll('.lcc-nav').forEach(function (b) { b.onclick = function () { shiftMonth(+b.dataset.d); }; });
     root.querySelectorAll('.lcc-day').forEach(function (b) { b.onclick = function () { edit(b.dataset.k); }; });
+    var fileName = 'phieu-luong-' + S.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').replace(/\s+/g, '-') + '-' + S.month;
+    var dl = document.getElementById('lcc-dl');
+    if (dl) dl.onclick = function () {
+      var el = root.querySelector('.lcc-ps');
+      if (!window.html2canvas) { alert('Chưa tải xong, thử lại sau vài giây.'); return; }
+      dl.disabled = true; dl.textContent = 'Đang tạo ảnh…';
+      html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#f1f4f8' }).then(function (cv) {
+        var a = document.createElement('a'); a.download = fileName + '.png'; a.href = cv.toDataURL('image/png');
+        document.body.appendChild(a); a.click(); a.remove();
+      }).catch(function (e) { alert('Không tạo được ảnh: ' + e.message); })
+        .then(function () { dl.disabled = false; dl.textContent = '📷 Tải ảnh phiếu'; });
+    };
+    var pr = document.getElementById('lcc-pr');
+    if (pr) pr.onclick = function () {      // mở cửa sổ chỉ có phiếu -> in / "Lưu thành PDF"
+      var w = window.open('', '_blank');
+      if (!w) { alert('Trình duyệt chặn cửa sổ mới — cho phép popup rồi bấm lại.'); return; }
+      w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>' + fileName + '</title>' +
+        (LCC.css || []).map(function (u) { return '<link rel="stylesheet" href="' + u + '">'; }).join('') +
+        '<style>body{margin:0;padding:16px;background:#fff}@page{margin:10mm}.lcc-ps{-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>' +
+        root.querySelector('.lcc-ps').outerHTML + '<script>window.onload=function(){setTimeout(function(){window.print()},400)}<\/script></body></html>');
+      w.document.close();
+    };
     var pb = document.getElementById('lcc-punch');
     if (pb) pb.onclick = function () {
       pb.disabled = true;

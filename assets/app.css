@@ -76,3 +76,6 @@
 #lcc-app .lcc-btn.out { background:var(--full); }
 #lcc-app .lcc-btn:disabled { opacity:.5; }
 #lcc-app .lcc-tag.ok { background:var(--leavebg); color:var(--leave); }
+#lcc-app .lcc-sbar { display:flex; gap:8px; margin:-4px 0 14px; }
+#lcc-app .lcc-sbar .lcc-btn { margin-top:0; }
+#lcc-app .lcc-btn.ghost2 { background:#fff; color:var(--ink); border:1px solid var(--line); }

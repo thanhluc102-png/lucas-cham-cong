@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Lucas Chấm Công
  * Description: Nhân viên tự điền ca làm tại trang /cham-cong (đăng nhập bằng mã PIN). Tool tính lương đầu tháng đọc ca qua REST, đẩy phiếu lương lên để chủ shop duyệt; duyệt xong nhân viên mới xem được phiếu của mình.
- * Version: 1.3.0
+ * Version: 1.4.0
  * Update URI: https://github.com/thanhluc102-png/lucas-cham-cong
  * Author: Lucas Combo
  * Requires PHP: 7.4
  */
 if (!defined('ABSPATH')) exit;
 
-define('LCC_VER', '1.3.0');
+define('LCC_VER', '1.4.0');
 define('LCC_REPO', 'thanhluc102-png/lucas-cham-cong');   // nơi plugin tự lấy bản cập nhật
 // Quy tắc tự xác định ca từ giờ chấm công (đã chốt với chủ shop): trễ <= 15' vẫn đủ ca
 define('LCC_GRACE_MIN', 15);
@@ -192,8 +192,11 @@ add_shortcode('lucas_cham_cong', function () {
     wp_enqueue_style('lcc', plugins_url('assets/app.css', __FILE__), [], LCC_VER);
     wp_enqueue_style('lcc-ps', plugins_url('assets/payslip.css', __FILE__), [], LCC_VER);
     wp_enqueue_style('lcc-font', 'https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap', [], null);
-    wp_enqueue_script('lcc', plugins_url('assets/app.js', __FILE__), [], LCC_VER, true);
-    wp_localize_script('lcc', 'LCC', ['api' => esc_url_raw(rest_url('lcc/v1/'))]);
+    wp_enqueue_script('html2canvas', 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', [], null, true);
+    wp_enqueue_script('lcc', plugins_url('assets/app.js', __FILE__), ['html2canvas'], LCC_VER, true);
+    wp_localize_script('lcc', 'LCC', ['api' => esc_url_raw(rest_url('lcc/v1/')),
+        'css' => [plugins_url('assets/payslip.css', __FILE__) . '?ver=' . LCC_VER,
+                  'https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap']]);
     return '<div id="lcc-app"><div class="lcc-loading">Đang tải…</div></div>';
 });
 // Trang chấm công không cho máy tìm kiếm / bộ nhớ đệm giữ lại
